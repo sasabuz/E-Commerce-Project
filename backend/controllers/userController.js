@@ -91,17 +91,26 @@ const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log("INPUT EMAIL:", email);
+    console.log("INPUT PASSWORD:", password);
+    console.log("ENV EMAIL:", process.env.ADMIN_EMAIL);
+    console.log("ENV PASSWORD:", process.env.ADMIN_PASSWORD);
+
     if (
       email === process.env.ADMIN_EMAIL &&
       password === process.env.ADMIN_PASSWORD
     ) {
-      const token = jwt.sign(email + password, process.env.JWT_SECRET);
+      const token = jwt.sign(
+        { role: "admin" },
+        process.env.JWT_SECRET
+      );
 
       res.status(200).json({ success: true, token });
     } else {
-      res
-        .status(400)
-        .json({ success: false, message: "Invalid email or password" });
+      res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
   } catch (error) {
     console.log("Error while logging in admin: ", error);
